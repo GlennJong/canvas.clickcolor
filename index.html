@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function GetClickPos() {
+      this.bindEvents()
+    }
+    GetClickPos.prototype.newPos = function() {
+      var x = event.clientX;
+      var y = event.clientY;
+      var newPos = new posItem(x,y);
+
+      document.body.append(newPos.$elem)
+    }
+    GetClickPos.prototype.bindEvents = function() {
+      document.addEventListener('click', this.newPos.bind(this))
+    }
+    function posItem(posX, posY) {
+      this.x = posX;
+      this.y = posY;
+      this.$elem = this.buildElem(this.x, this.y);
+      return this
+    }
+    posItem.prototype.buildElem = function(posX, posY) {
+      var $div = document.createElement('div');
+      $div.setAttribute('class', 'fixed-box-item');
+      $div.setAttribute('style', 'position:absolute; left:' + posX + 'px; top:' + posY + 'px');
+      $div.textContent = posX + ', ' + posY;
+      return $div
+    }
+
+    window.init = new GetClickPos()
+
+  </script>
+</body>
+</html>
