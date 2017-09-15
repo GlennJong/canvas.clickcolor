@@ -1,40 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
 </head>
 <body>
+  <canvas id="canvas"></canvas>
   <script>
-    function GetClickPos() {
-      this.bindEvents()
-    }
-    GetClickPos.prototype.newPos = function() {
-      var x = event.clientX;
-      var y = event.clientY;
-      var newPos = new posItem(x,y);
+    function DrawBoard() {
+      // Canvas
+      var $canvas = document.getElementById('canvas');
+      var ctx = $canvas.getContext('2d');
+      // Board Setting
+      function board() {
+        $canvas.setAttribute('width', window.innerWidth);
+        $canvas.setAttribute('height', window.innerHeight);
+        this.bindEvents()
+      }
+      board.prototype.bindEvents = function() {
+        document.addEventListener('click', this.addDot.bind(this));
+      }
+      board.prototype.addDot = function() {
+        var x = event.clientX;
+        var y = event.clientY;
+        var newDot = new draw(x,y);
+      }
+      function draw(posX, posY) {
+        this.x    = posX;
+        this.y    = posY;
+        this.size = Math.floor(Math.random() * 100);
 
-      document.body.append(newPos.$elem)
-    }
-    GetClickPos.prototype.bindEvents = function() {
-      document.addEventListener('click', this.newPos.bind(this))
-    }
-    function posItem(posX, posY) {
-      this.x = posX;
-      this.y = posY;
-      this.$elem = this.buildElem(this.x, this.y);
-      return this
-    }
-    posItem.prototype.buildElem = function(posX, posY) {
-      var $div = document.createElement('div');
-      $div.setAttribute('class', 'fixed-box-item');
-      $div.setAttribute('style', 'position:absolute; left:' + posX + 'px; top:' + posY + 'px');
-      $div.textContent = posX + ', ' + posY;
-      return $div
+        // Move
+        this.movex  = Math.random() < 0.5 ? -1 : 1;
+        this.movey  = Math.random() < 0.5 ? -1 : 1;
+        this.speedx = Math.floor(Math.random() * 10) / 10;
+        this.speedy = Math.floor(Math.random() * 10) / 10;
+
+        this.print()
+      }
+      draw.prototype.print = function() {
+        var hue   = Math.floor(Math.random() * 360);
+        var sat   = Math.floor(Math.random() * 100) + '%';
+        var light = Math.floor(Math.random() * 100) + '%';
+        var randomColor = 'hsl(' + hue + ', ' + sat + ', ' + light + ')';
+
+        ctx.fillStyle = randomColor;
+        ctx.fillRect(this.x, this.y, this.size, this.size);
+      }
+      new board()
     }
 
-    window.init = new GetClickPos()
-
+    window.init = DrawBoard()
   </script>
 </body>
 </html>
